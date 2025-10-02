@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controllers;
 
 import DAO.StaffDAO;
@@ -15,45 +14,71 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import mylib.IConstants;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name="LoginController", urlPatterns={"/LoginController"})
+@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
             String username = request.getParameter("txtusername");
             String password = request.getParameter("txtpassword");
-            if(username != null && password != null) {
+            if (username != null && password != null) {
                 StaffDAO staffDAO = new StaffDAO();
                 StaffDTO staff = staffDAO.getLoginStaff(username, password);
-                if(staff != null) {
+                if (staff != null) {
                     HttpSession session = request.getSession();
                     session.setAttribute("USER", staff);
-                    
 
+                    String role = staff.getRole();
+                    String url = IConstants.LOGIN_PAGE;
+
+                    switch (role) {
+                        case "admin":
+                            url = IConstants.ADMIN_PAGE;
+                            break;
+                        case "receptionist":
+                            url = IConstants.RECEPTIONIST_PAGE;
+                            break;
+                        case "manager":
+                            url = IConstants.MANAGER_PAGE;
+                            break;
+                        case "housekeeping":
+                            url = IConstants.HOUSEKEEPING_PAGE;
+                            break;
+                        case "servicestaff":
+                            url = IConstants.SERVICE_PAGE;
+                            break;
+                    }
+                    request.getRequestDispatcher(url).forward(request, response);
+                } else {
+                    request.getRequestDispatcher(IConstants.LOGIN_PAGE).forward(request, response);
                 }
             }
         } catch (Exception e) {
-        } finally {
+            e.printStackTrace();
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -61,12 +86,13 @@ public class LoginController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -74,12 +100,13 @@ public class LoginController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
