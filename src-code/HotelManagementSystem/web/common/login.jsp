@@ -14,9 +14,18 @@
     <body>
         <h1>Login Page</h1>
         <form action="MainController" method="post">
-            <p>Username: <input type="text" name="txtusername" required=""></p>
-            <p>Password: <input type="password" name="txtpassword" required=""></p>
+            <p>Username: <input type="text" name="txtusername"></p>
+            <p>Password: <input type="password" name="txtpassword"></p>
             <p><input type="submit" name="action" value="Login"></p>
         </form>
+        
+        <p>
+            <%
+                String error = (String) request.getAttribute("ERROR");
+                if(error != null && !error.trim().isEmpty()) {
+                    out.print(error);
+                }
+            %>
+        </p>
     </body>
 </html>

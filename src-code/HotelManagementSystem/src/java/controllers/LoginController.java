@@ -38,7 +38,9 @@ public class LoginController extends HttpServlet {
         try {
             String username = request.getParameter("txtusername");
             String password = request.getParameter("txtpassword");
-            if (username != null && password != null) {
+            if (username != null && !username.trim().isEmpty()
+                    && password != null && !password.trim().isEmpty()) {
+
                 StaffDAO staffDAO = new StaffDAO();
                 StaffDTO staff = staffDAO.getLoginStaff(username, password);
                 if (staff != null) {
@@ -64,11 +66,18 @@ public class LoginController extends HttpServlet {
                         case "servicestaff":
                             url = IConstants.SERVICE_PAGE;
                             break;
+                        default:
+                            url = IConstants.LOGIN_PAGE;
+                            break;
                     }
                     request.getRequestDispatcher(url).forward(request, response);
                 } else {
+                    request.setAttribute("ERROR", IConstants.ERR_INVALID_LOGIN);
                     request.getRequestDispatcher(IConstants.LOGIN_PAGE).forward(request, response);
                 }
+            } else {
+                request.setAttribute("ERROR", IConstants.ERR_EMPTY_FIELD);
+                request.getRequestDispatcher(IConstants.LOGIN_PAGE).forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +96,8 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Lần đầu vào chỉ show form login, KHÔNG check lỗi
+        request.getRequestDispatcher(IConstants.LOGIN_PAGE).forward(request, response);
     }
 
     /**
